@@ -62,11 +62,12 @@ alterei_os_dados_acima="nao";
 ####################################
 # Não alterar a partir deste ponto #
 ####################################
-
 function espera() {
 	read -p "$1 Tecle <ENTER> para continuar..." a;
 	unset a;
 }
+
+# Verifica se as informações estão corretas #
 
 #Verifica se o usuário realmente alterou os dados
 if [ "$alterei_os_dados_acima" == "nao" ]; then
@@ -74,6 +75,16 @@ if [ "$alterei_os_dados_acima" == "nao" ]; then
    exit;
 fi
 
+if [ ! -e "$boot_hd" ] || [ ! -e "$swap_hd" ] || [ ! -e "$root_hd" ] || [ ! -e "$home_hd" ]; then
+   echo "Crie as 4 partições antes de continuar com o script.";
+   echo "Será iniciado o comando 'cfdisk' para isso.";
+   echo "A primeira partição deve ser a boot (~100MB)";
+   echo "A segunda partição deve ser a SWAP (~1024MB)";
+   echo "A terceira partição deve ser a ROOT (>=3GB)";
+   echo "A quarta partição deve ser a HOME (Tamanho variado >=3GB)";
+   espera "cfdisk";
+   cfdisk;
+fi
 # Configura o teclado
 loadkeys $layout_teclado;
 espera "Teclado Configurado.";
