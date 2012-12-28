@@ -172,5 +172,5 @@ echo "Desmontou as partições.";
 read -p "Tecle <ENTER> para continuar..." a;
 unset a;
 
-echo "Seu novo Arch Linux está instalado e com as configurações básicas.";
+echo "Seu novo Arch Linux está instalado e com as configurações básicas. ";
 exit;
