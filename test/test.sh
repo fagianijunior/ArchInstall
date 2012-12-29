@@ -15,7 +15,7 @@
 #                                                                      #
 # Author: Carlos Fagiani Junior                                        #
 # E-mail: fagianijunior@gmail.com                                      #
-# Versão: 1.0                                                          #
+# Versão: 1.2                                                          #
 #                                                                      #
 # Este Script segue o guia de instalação Arch:                         #
 # https://wiki.archlinux.org/index.php/Installation_Guide              #
@@ -52,10 +52,10 @@ home_hd="/dev/sda4";
 # nao/sim
 formatar_home_hd="nao";
 
-# sim/nao
+# Usar wifi na instalação? sim/nao
 usar_wifi="nao";
 
-# syslinux/grub/nao
+# syslinux/grub/nenhum
 boot_loader="grub";
 
 alterei_os_dados_acima="nao";
@@ -66,6 +66,10 @@ function espera() {
 	read -p "$1 Tecle <ENTER> para continuar..." a;
 	unset a;
 }
+
+# Configura o teclado
+loadkeys $layout_teclado;
+espera "Teclado Configurado.";
 
 # Verifica se as informações estão corretas #
 
@@ -84,14 +88,11 @@ if [ ! -e "$boot_hd" ] || [ ! -e "$swap_hd" ] || [ ! -e "$root_hd" ] || [ ! -e "
    echo "A quarta partição deve ser a HOME (Tamanho variado >=3GB)";
    espera "cfdisk";
    cfdisk;
+   if [ ! -e "$boot_hd" ] || [ ! -e "$swap_hd" ] || [ ! -e "$root_hd" ] || [ ! -e "$home_hd" ]; then
+      espera "Particionamento errado, saindo do script";
+      exit;
+   fi
 fi
-# Configura o teclado
-loadkeys $layout_teclado;
-espera "Teclado Configurado.";
-
-## Pode ser adicionado uma opção para criação de partições.
-## Por enquanto o usuário deve criar as partições antes
-## de rodar o script
 
 # Formata as partições root, boot e SWAP
 mkfs -t ext2 $boot_hd;
@@ -130,7 +131,7 @@ espera "base e base-devel instalados.";
 
 # Instala o bootloader
 if [ "$boot_loader" == "grub" ]; then
-	pacstrap /mnt grub-bios
+	pacstrap /mnt grub-bios;
 elif [ "$boot_loader" == "syslinux" ]; then 
 	pacstrap /mnt syslinux;
 fi
@@ -149,7 +150,7 @@ espera "Adicionou $hostname em /etc/hostname";
 arch-chroot /mnt /bin/bash -c "ln -s /usr/share/zoneinfo/$localtime /etc/localtime;";
 espera "Configurou localtime.";
 
-# Tradução para o português
+# Tradução
 echo "LANG="$linguagem > /mnt/etc/locale.conf
 espera "Criou o arquivo locale.gen.";
 
@@ -167,7 +168,7 @@ sed "s/#"$linguagem"/"$linguagem"/g" /mnt/tmp/locale.gen > /mnt/etc/locale.gen;
 arch-chroot /mnt /bin/bash -c "locale-gen; mkinitcpio -p linux;";
 espera "gerou o locale. Criou a RAM disk.";
 if [ "$boot_loader" == "grub" ]; then
-   arch-chroot /mnt /bin/bash -c "modprobe dm-mod;	grub-install --recheck --debug echo "${boot_hd:0:8}";	mkdir -p /boot/grub/loale;	cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo;	grub-mkconfig -o /boot/grub/grub.cfg;";
+   arch-chroot /mnt /bin/bash -c "modprobe dm-mod;	grub-install --recheck --debug "${boot_hd:0:8}"; mkdir -p /boot/grub/locale; cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo; grub-mkconfig -o /boot/grub/grub.cfg;";
 elif [ "$boot_loader" == "syslinux" ]; then
    arch-chroot /mnt /bin/bash -c "/usr/sbin/syslinux-install_update -iam;";
 fi
@@ -183,5 +184,5 @@ echo "Desmontou as partições.";
 read -p "Tecle <ENTER> para continuar..." a;
 unset a;
 
-echo "Seu novo Arch Linux está instalado e com as configurações básicas. ";
+echo "Seu novo Arch Linux está instalado e com as configurações básicas.";
 exit;
