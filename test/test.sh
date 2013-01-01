@@ -126,7 +126,7 @@ if [ "$usar_wifi" == "sim" ]; then
 fi
 
 # Instala a base do sistema
-pacstrap /mnt base base-devel wpa-supplicant dialog;
+pacstrap /mnt base base-devel wpa_supplicant dialog;
 espera "base e base-devel instalados.";
 
 # Instala o bootloader
@@ -151,7 +151,7 @@ arch-chroot /mnt /bin/bash -c "ln -s /usr/share/zoneinfo/$localtime /etc/localti
 espera "Configurou localtime.";
 
 # Tradução
-echo "LANG="$linguagem > /mnt/etc/locale.conf
+echo "LANG="$linguagem > /mnt/etc/locale.conf;
 espera "Criou o arquivo locale.gen.";
 
 # Configura texto no console
@@ -165,17 +165,23 @@ cp /mnt/etc/locale.gen /mnt/tmp/locale.gen;
 sed "s/#"$linguagem"/"$linguagem"/g" /mnt/tmp/locale.gen > /mnt/etc/locale.gen;
 
 # Entra no sistema instalado
-arch-chroot /mnt /bin/bash -c "locale-gen; mkinitcpio -p linux;";
+arch-chroot /mnt /bin/bash -c "locale-gen";
+arch-chroot /mnt /bin/bash -c "mkinitcpio -p linux";
 espera "gerou o locale. Criou a RAM disk.";
+
 if [ "$boot_loader" == "grub" ]; then
-   arch-chroot /mnt /bin/bash -c "modprobe dm-mod;	grub-install --recheck --debug "${boot_hd:0:8}"; mkdir -p /boot/grub/locale; cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo; grub-mkconfig -o /boot/grub/grub.cfg;";
+   arch-chroot /mnt /bin/bash -c "modprobe dm-mod";
+   arch-chroot /mnt /bin/bash -c "grub-install --recheck --debug "${boot_hd:0:8};
+   arch-chroot /mnt /bin/bash -c "mkdir -p /boot/grub/locale";
+   arch-chroot /mnt /bin/bash -c "cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo";
+   arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg";
 elif [ "$boot_loader" == "syslinux" ]; then
    arch-chroot /mnt /bin/bash -c "/usr/sbin/syslinux-install_update -iam;";
 fi
 espera "Configurou o $boot_loader";
 
 #Cria senha do ROOT
-arch-chroot /mnt /bin/bash -c "passwd; $root_senha; $root_senha;"
+arch-chroot /mnt /bin/bash -c "passwd";
 espera "Setou a senha do ROOT.";
 
 # Desmonta as partições
