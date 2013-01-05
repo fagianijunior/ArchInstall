@@ -22,11 +22,11 @@
 #                                                                      #
 ########################################################################
 
-# 1- Rode o CD/PenDrove de instalação do Arch Linux
-# 2- Transfira o script para a máquina (via PenDrive o via wget)
-# wget http://dl.dropbox.com/u/79200609/arch/archinstall.sh
-# 3- Crie as 4 partições com o comando cfdisk /dev/sdX
-# 4- Altere os dados abaixo
+# 1- Rode o CD/PenDrive de instalação do Arch Linux
+# 2- Transfira o script para a máquina (via PenDrive ou via wget)
+# wget https://github.com/fagianijunior/ArchInstall/blob/master/src/archinstall.sh
+# 3- Altere os dados abaixo
+# 4- De permissão e rode o Script
 # chmod +x archinstall.sh
 # ./archinstall.sh
 # Se tudo ocorrer bem, seu Arch Linux estará instalado.
@@ -57,6 +57,9 @@ usar_wifi="nao";
 
 # syslinux/grub/nenhum
 boot_loader="grub";
+
+#sim/nao
+pos_instalacao="sim";
 
 alterei_os_dados_acima="nao";
 ####################################
@@ -122,7 +125,7 @@ espera "$home_hd montado em /mnt/home";
 # Caso for utilizar o wifi
 if [ "$usar_wifi" == "sim" ]; then
 	wifi-menu;
-	espera "Wifi conectadoj.";
+	espera "Wifi conectado.";
 fi
 
 # Instala a base do sistema
@@ -179,6 +182,12 @@ elif [ "$boot_loader" == "syslinux" ]; then
    arch-chroot /mnt /bin/bash -c "/usr/sbin/syslinux-install_update -iam;";
 fi
 espera "Configurou o $boot_loader";
+
+if [ "$pos_instalacao" == "sim" ]; then
+   pacstrap /mnt wget;
+   arch-chroot /mnt /bin/bash -c "wget https://github.com/fagianijunior/ArchInstall/blob/master/src/pos_archinstall.sh -O /root/pos_archinstall.sh";
+   espera "Quando reiniciar o sistema execute o script pos_archinstall.sh que foi gerado na pasta /root";
+fi
 
 #Cria senha do ROOT
 arch-chroot /mnt /bin/bash -c "passwd";
