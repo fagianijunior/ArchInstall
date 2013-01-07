@@ -58,7 +58,7 @@ usar_wifi="nao";
 # syslinux/grub/nenhum
 boot_loader="grub";
 
-#sim/nao
+#sim/nao 
 pos_instalacao="sim";
 
 alterei_os_dados_acima="nao";
