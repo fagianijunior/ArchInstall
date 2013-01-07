@@ -58,8 +58,8 @@ usar_wifi="nao";
 # syslinux/grub/nenhum
 boot_loader="grub";
 
-#sim/nao
-pos_instalacao="sim";
+#sim/nao #Está opção ainda não funciona
+#pos_instalacao="sim";
 
 alterei_os_dados_acima="nao";
 ####################################
@@ -183,6 +183,7 @@ elif [ "$boot_loader" == "syslinux" ]; then
 fi
 espera "Configurou o $boot_loader";
 
+#Experimental
 if [ "$pos_instalacao" == "sim" ]; then
    pacstrap /mnt wget;
    arch-chroot /mnt /bin/bash -c "wget https://github.com/fagianijunior/ArchInstall/blob/master/src/pos_archinstall.sh -O /root/pos_archinstall.sh";
@@ -195,9 +196,7 @@ espera "Setou a senha do ROOT.";
 
 # Desmonta as partições
 umount /mnt/{boot,home,};
-echo "Desmontou as partições.";
-read -p "Tecle <ENTER> para continuar..." a;
-unset a;
+espera "Desmontou as partições.";
 
 echo "Seu novo Arch Linux está instalado e com as configurações básicas.";
 exit;
