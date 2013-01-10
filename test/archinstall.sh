@@ -24,8 +24,8 @@ root_senha="senha_root";
 
 layout_teclado="br-abnt2";
 linguagem="pt_BR.UTF-8";
-font="lat9w-16";
-font_map="8859-1_to_uni";
+fonte_console="lat9w-16";
+fonte_map="8859-1_to_uni";
 
 hostname="ArchNote";
 localtime="America/Fortaleza";
@@ -133,8 +133,8 @@ echo "LANG="$linguagem > /mnt/etc/locale.conf;
 espera "Criou o arquivo locale.gen.";
 
 echo "KEYMAP="$layout_teclado > /mnt/etc/vconsole.conf;
-echo "FONT="$font >> /mnt/etc/vconsole.conf;
-echo "FONT_MAP="$font_map >> /mnt/etc/vconsole.conf;
+echo "FONT="$fonte_console >> /mnt/etc/vconsole.conf;
+echo "FONT_MAP="$fonte_map >> /mnt/etc/vconsole.conf;
 espera "Configurou o vconsole.conf.";
 
 cp /mnt/etc/locale.gen /mnt/tmp/locale.gen;
