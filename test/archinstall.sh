@@ -1,5 +1,5 @@
 #!/bin/bash
-
+ 
 # Author: Carlos Fagiani Junior                                        #
 # E-mail: fagianijunior@gmail.com                                      #
 # Versão: 0.2                                                          #
@@ -22,10 +22,15 @@
 #######################################
 root_senha="senha_root";
 
+novo_usuario="terabytes";
+novo_usuario_nome_completo="Carlos Fagiani Junior";
+novo_usuario_senha="senha_usuario";
+novo_usuario_grupos="sys,disk,wheel,uucp,games,network,video,audio,storage,power";
+
 layout_teclado="br-abnt2";
 linguagem="pt_BR.UTF-8";
-fonte_console="lat9w-16";
-fonte_map="8859-1_to_uni";
+font="lat9w-16";
+font_map="8859-1_to_uni";
 
 hostname="ArchNote";
 localtime="America/Fortaleza";
@@ -43,9 +48,6 @@ usar_wifi="nao";
 
 # syslinux/grub/nenhum
 boot_loader="grub";
-
-#sim/nao #Está opção ainda não funciona
-#pos_instalacao="sim";
 
 alterei_os_dados_acima="nao";
 ####################################
@@ -109,8 +111,24 @@ if [ "$usar_wifi" == "sim" ]; then
 	espera "Wifi conectado.";
 fi
 
-pacstrap /mnt base base-devel wpa_supplicant dialog;
+pacstrap /mnt base base-devel;
 espera "base e base-devel instalados.";
+
+
+# ORGANIZAR
+
+
+
+#complementares
+pacstrap /mnt wpa_supplicant dialog bash-completion xorg gvfs gvfs-smb xfce4 flashplugin bluez blueman networkmanager network-manager-applet jdk7-openjdk file-roller opera chromium vlc leafpad transmission-gtk ttf-freefont ttf-dejavu;
+
+arch-chroot /mnt /bin/bash -c "systemctl enable bluetooth.service";
+arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager";
+
+
+#/ORGANIZAR
+
+
 
 if [ "$boot_loader" == "grub" ]; then
 	pacstrap /mnt grub-bios;
@@ -133,8 +151,8 @@ echo "LANG="$linguagem > /mnt/etc/locale.conf;
 espera "Criou o arquivo locale.gen.";
 
 echo "KEYMAP="$layout_teclado > /mnt/etc/vconsole.conf;
-echo "FONT="$fonte_console >> /mnt/etc/vconsole.conf;
-echo "FONT_MAP="$fonte_map >> /mnt/etc/vconsole.conf;
+echo "FONT="$font >> /mnt/etc/vconsole.conf;
+echo "FONT_MAP="$font_map >> /mnt/etc/vconsole.conf;
 espera "Configurou o vconsole.conf.";
 
 cp /mnt/etc/locale.gen /mnt/tmp/locale.gen;
@@ -166,6 +184,15 @@ $root_senha
 $root_senha
 EOF";
 espera "Setou a senha do ROOT.";
+
+arch-chroot /mnt /bin/bash -c "useradd -d /hone/"$novo_usuario" -m -g users -G "$novo_usuario_grupos" -s /bin/bash "$novo_usuario;
+espera "Adicionou o usuário: " $novo_usuario;
+
+arch-chroot /mnt /bin/bash -c "passwd "$novo_usuario" << EOF
+$novo_usuario_senha
+$novo_usuario_senha
+EOF";
+espera "Setou a senha de "$novo_usuario;
 
 umount /mnt/{boot,home,};
 espera "Desmontou as partições.";
