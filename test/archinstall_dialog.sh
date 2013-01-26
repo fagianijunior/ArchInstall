@@ -1,12 +1,22 @@
 #!/bin/bash
 
-root_senha="";
+root_senha="a";
 
-layout_teclado="";
-linguagem="";
-fonte_console="";
-fonte_map="";
-localtime="";
+layout_teclado="br-abnt2";
+linguagem="pt_BR.UTF-8";
+fonte_console="lat9w-16";
+fonte_map="8859-1_to_uni";
+localtime="America/Fortaleza";
+hostname="ArchPC";
+
+boot_hd="/dev/sd";
+boot_hd_tamanho="0";
+swap_hd="/dev/sd";
+swap_hd_tamanho="0";
+root_hd="/dev/sd";
+root_hd_tamanho="0";
+home_hd="/dev/sd";
+home_hd_tamanho="0";
 
 function SenhaRoot() {
    while [ "$root_senha" == "" ]; do
@@ -22,8 +32,9 @@ function SenhaRoot() {
 }
 
 function Teclado() {
-   if [ "$layout_teclado" == "" ]; then
+   while [ "$layout_teclado" == "" ]; do
       layout_teclado=$(dialog \
+       --no-cancel \
        --stdout \
        --title "Teclado" \
        --menu "Layout do teclado: " \
@@ -58,24 +69,20 @@ function Teclado() {
        uk                     "United Kingdom" \
        OUTRO                  "Outro layout" \
        );
-   fi
-   if [ "$layout_teclado" ==  "OUTRO" ]; then
-      layout_teclado=$(dialog \
-       --no-cancel \
-       --stdout \
-       --title "Teclado" \
-       --inputbox "Informe o Layout do seu teclado:" \
-       0 0);
-   fi
+
+      if [ "$layout_teclado" ==  "OUTRO" ]; then
+         layout_teclado=$(dialog \
+          --no-cancel \
+          --stdout \
+          --title "Teclado" \
+          --inputbox "Informe o Layout do seu teclado:" \
+          0 0);
+      fi
+   done;
 }
-if [ $layout_teclado == "" ]; then
-   Teclado
-else
-   Linguagem
-fi
 
 function Linguagem() {
-   if [ "$linguagem" == "" ]; then
+   while [ "$linguagem" == "" ]; do
       linguagem=$(dialog \
        --no-cancel \
        --stdout \
@@ -85,19 +92,19 @@ function Linguagem() {
        pt_BR.UTF-8   "Português brasileiro UTF-8" \
        OUTRO         "Outra linguagem" \
        );
-   fi
-   if [ "$linguagem" == "OUTRO" ]; then
-      linguagem=$(dialog \
-       --no-cancel \
-       --stdout \
-       --title "Linguagem" \
-       --inputbox "Informe a linguagem do sistema:" \
-       0 0);
-   fi
+      if [ "$linguagem" == "OUTRO" ]; then
+         linguagem=$(dialog \
+          --no-cancel \
+          --stdout \
+          --title "Linguagem" \
+          --inputbox "Informe a linguagem do sistema:" \
+          0 0);
+      fi
+   done;
 }
 
 function FonteConsole() {
-   if [ "$fonte_console" == "" ]; then
+   while [ "$fonte_console" == "" ]; do
       fonte_console=$(dialog \
        --no-cancel \
        --stdout \
@@ -106,20 +113,21 @@ function FonteConsole() {
        0 0 0 \
        lat9w-16   "" \
        lat0-16    "" \
-       OUTRA         "Outra fonte");
-   fi
-   if [ "$fonte_console" == "OUTRO" ]; then
-      fonte_console=$(dialog \
-       --no-cancel \
-       --stdout \
-       --title "Console" \
-       --inputbox "Informe a fonte para o console:" \
-       0 0);
-   fi
+       OUTRO      "Outra fonte");
+
+      if [ "$fonte_console" == "OUTRO" ]; then
+         fonte_console=$(dialog \
+          --no-cancel \
+          --stdout \
+          --title "Console" \
+          --inputbox "Informe a fonte para o console:" \
+          0 0);
+      fi
+   done;
 }
 
 function MapaFonte() {
-   if [ "$fonte_map" == "" ]; then
+   while [ "$fonte_map" == "" ]; do
       fonte_map=$(dialog \
        --no-cancel \
        --stdout \
@@ -127,50 +135,115 @@ function MapaFonte() {
        --menu  "Selecione o mapa de fonte:" \
        0 0 0 \
        8859-1_to_uni "" \
-       OUTRA         "Outro mapa de fonte ");
-   fi
-   if [ "$fonte_map" == "OUTRO" ]; then
-      fonte_map=$(dialog \
-       --no-cancel \
-       --stdout \
-       --title "Console" \
-       --inputbox "Informe a fonte para o console:" \
-       0 0);
-   fi
+       OUTRO         "Outro mapa de fonte ");
+
+      if [ "$fonte_map" == "OUTRO" ]; then
+         fonte_map=$(dialog \
+          --no-cancel \
+          --stdout \
+          --title "Console" \
+          --inputbox "Informe a fonte para o console:" \
+          0 0);
+      fi
+   done;
 }
 
 function HostName() {
-   if [ "$hostname" == "" ]; then
+   while [ "$hostname" == "" ]; do
       hostname=$(dialog \
        --no-cancel \
        --stdout \
        --title "Hostname" \
        --inputbox "Informe como será o nome da máquina na rede:" \
        0 0);
-   fi
+   done;
 }
 
 function LocalTime() {
-   for i in $(ls -1d /usr/share/zoneinfo/*/); do
-      j=$(echo $i | cut -d/ -f5);
-      lista_zona="$lista_zona $j $i";
-   done
-   zona1=/usr/share/zoneinfo/$(dialog --no-cancel --stdout --title "1ª zona" \
-    --menu "Escolha a zona:" 0 0 0 $lista_zona);
+   if [ "$localtime" == "" ]; then
+      for i in $(ls -1d /usr/share/zoneinfo/*/); do
+         j=$(echo $i | cut -d/ -f5);
+         lista_zona="$lista_zona $j $i";
+      done
+      zona1=/usr/share/zoneinfo/$(dialog --no-cancel --stdout \
+       --title "1ª zona" \
+       --menu "Escolha a zona:" \
+       0 0 0 \
+       $lista_zona);
 
-   lista_zona="";
-   for i in $(ls -1 $zona1); do
-      lista_zona="$lista_zona $i $i";
-   done
-   localtime=$zona1/$(dialog --no-cancel --stdout --title "2ª Zona" \
-    --menu "Escolha a Zona:" 0 0 0 $lista_zona);
+      lista_zona="";
+      for i in $(ls -1 $zona1); do
+         lista_zona="$lista_zona $i $i";
+      done
+      localtime=$zona1/$(dialog --no-cancel --stdout \
+       --title "2ª Zona" \
+       --menu "Escolha a Zona:" \
+       0 0 0 \
+       $lista_zona);
+   fi
 }
 
 function Particoes() {
-   cfdisk;
+   todos="0";
 
-   boot_hd=$(dialog --no-cancel --stdout --title "Partição Boot" \
-    --menu "Escolha a partição boot");
+   while [ "$todos" -le "4" ]; do
+      escolha=$(dialog --no-cancel --stdout \
+       --title "Particionamento" \
+       --menu "Partições" \
+       -1 0 0 \
+       BOOT "$boot_hd  $boot_hd_tamanho MB" \
+       SWAP "$swap_hd  $swap_hd_tamanho MB" \
+       ROOT "$root_hd  $root_hd_tamanho MB" \
+       HOME "$home_hd  $home_hd_tamanho MB");
+
+      if [ "$escolha" == "BOOT" ]; then
+         boot_hd=$(dialog --stdout \
+          --title "BOOT HD" \
+          --inputbox "Partição para o boot" \
+          0 0 \
+          "$boot_hd");
+          while [ "$boot_hd_tamanho" -le "39" ]; do
+             boot_hd_tamanho=$(dialog --no-cancel --stdout \
+              --title "BOOT HD" \
+              --inputbox "Tamanho mínimo: 40MB \nTamanho aconselhado: entre 50MB a 100MB" \
+              0 0 "50");
+          done;
+      elif [ "$escolha" == "SWAP" ]; then
+         swap_hd=$(dialog --stdout \
+          --title "SWAP" \
+          --inputbox "Partição para o swap" \
+          0 0 \
+          "$swap_hd");
+         swap_hd_tamanho=$(dialog --no-cancel --stdout \
+          --title "SWAP HD" \
+          --inputbox "Tamanho mínimo: 0MB \nTamanho aconselhado: o dobro de sua memória RAM" \
+          0 0 "50");
+
+      elif [ "$escolha" == "ROOT" ]; then
+         root_hd=$(dialog --stdout \
+          --title "ROOT HD" \
+          --inputbox "Partição para a pasta root" \
+          0 0 \
+          "$root_hd");
+         while [ $root_hd_tamanho -le "9999" ]; do
+            root_hd_tamanho=$(dialog --no-cancel --stdout \
+             --title "ROOT HD" \
+             --inputbox "Tamanho mínimo: 10000MB \nTamanho aconselhado: > 50000MB \n0 para o restante do HD" \
+             0 0 "50");
+         done;
+
+      elif [ "$escolha" == "HOME" ]; then
+         home_hd=$(dialog --stdout \
+          --title "HOME HD" \
+          --inputbox "Partição para a pasta home" \
+          0 0 \
+          "$home_hd");
+         home_hd_tamanho=$(dialog --no-cancel --stdout \
+          --title "HOME HD" \
+          --inputbox "Tamanho mínimo: 10000MB \nTamanho aconselhado: 50000MB \n0 para o restante do HD" \
+          0 0 "50");
+      fi
+   done;
 }
 
 SenhaRoot;
@@ -180,6 +253,7 @@ FonteConsole;
 MapaFonte;
 HostName;
 LocalTime;
+Particoes;
 
 echo $root_senha;
 echo $layout_teclado;
