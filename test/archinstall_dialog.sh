@@ -9,14 +9,20 @@ fonte_map="8859-1_to_uni";
 localtime="America/Fortaleza";
 hostname="ArchPC";
 
-boot_hd="/dev/sd";
-boot_hd_tamanho="0";
-swap_hd="/dev/sd";
-swap_hd_tamanho="0";
+criar_boot_hd="";
+  boot_hd="/dev/sd";
+   boot_hd_tamanho="0";
+
+criar_swap="";
+  swap_hd="/dev/sd";
+   swap_hd_tamanho="0";
+
 root_hd="/dev/sd";
-root_hd_tamanho="0";
-home_hd="/dev/sd";
-home_hd_tamanho="0";
+  root_hd_tamanho="0";
+
+criar_home_hd="";
+  home_hd="/dev/sd";
+   home_hd_tamanho="0";
 
 function SenhaRoot() {
    while [ "$root_senha" == "" ]; do
@@ -186,15 +192,25 @@ function LocalTime() {
 function Particoes() {
    todos="0";
 
+   if [ "$criar_boot_hd" == "" ]; then
+      criar_boot_hd=$(dialog --no-cancel --stdout \
+       --title "BOOT HD" \
+       --menu "Deseja criar uma partição separada para o BOOT?" \
+       0 0 0 \
+       "sim" "" \
+       "não" ""
+       );
+   fi
+   if [ "$criar_boot_hd" == "sim" ]; then
+   menu_boot="BOOT" "$boot_hd  $boot_hd_tamanho MB" "SWAP" "$swap_hd  $swap_hd_tamanho MB" "ROOT" "$root_hd  $root_hd_tamanho MB" "HOME" "$home_hd  $home_hd_tamanho MB"
+
+   fi
    while [ "$todos" -le "4" ]; do
       escolha=$(dialog --no-cancel --stdout \
        --title "Particionamento" \
        --menu "Partições" \
        -1 0 0 \
-       BOOT "$boot_hd  $boot_hd_tamanho MB" \
-       SWAP "$swap_hd  $swap_hd_tamanho MB" \
-       ROOT "$root_hd  $root_hd_tamanho MB" \
-       HOME "$home_hd  $home_hd_tamanho MB");
+       $menu_boot);
 
       if [ "$escolha" == "BOOT" ]; then
          boot_hd=$(dialog --stdout \
