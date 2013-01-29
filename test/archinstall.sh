@@ -120,7 +120,10 @@ espera "base e base-devel instalados.";
 
 
 #complementares
-pacstrap /mnt wpa_supplicant dialog bash-completion xorg gvfs gvfs-smb xfce4 flashplugin bluez blueman networkmanager network-manager-applet jdk7-openjdk file-roller opera chromium vlc leafpad transmission-gtk ttf-freefont ttf-dejavu;
+pacstrap /mnt wpa_supplicant dialog bash-completion xorg gvfs gvfs-smb xfce4 \
+ xfce4-mailwatch-plugin flashplugin bluez blueman networkmanager \
+ network-manager-applet jdk7-openjdk file-roller opera chromium vlc leafpad \
+ transmission-gtk ttf-freefont ttf-dejavu;
 
 arch-chroot /mnt /bin/bash -c "systemctl enable bluetooth.service";
 arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager";
