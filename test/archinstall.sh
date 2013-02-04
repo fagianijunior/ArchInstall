@@ -54,8 +54,9 @@ alterei_os_dados_acima="nao";
 # Não alterar a partir deste ponto #
 ####################################
 function espera() {
-	read -p "$1 Tecle <ENTER> para continuar..." a;
-	unset a;
+	echo "--#--"
+	echo "$1";
+	echo "--#--";
 }
 
 loadkeys $layout_teclado;
@@ -123,7 +124,7 @@ espera "base e base-devel instalados.";
 pacstrap /mnt wpa_supplicant dialog bash-completion xorg gvfs gvfs-smb xfce4 \
  xfce4-mailwatch-plugin flashplugin bluez blueman networkmanager \
  network-manager-applet jdk7-openjdk file-roller opera chromium vlc leafpad \
- transmission-gtk ttf-freefont ttf-dejavu;
+ transmission-gtk ttf-freefont ttf-dejavu slim;
 
 arch-chroot /mnt /bin/bash -c "systemctl enable bluetooth.service";
 arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager";
