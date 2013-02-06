@@ -131,35 +131,35 @@ arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager";
 
 
 arch-chroot /mnt /bin/bash -c "systemctl enable slim.service";
-sed '/twm &/d' /etc/X11/xinit/xinitrc;
-sed '/xclock/d' /etc/X11/xinit/xinitrc;
-sed '/xterm -geometry/d' /etc/X11/xinit/xinitrc;
+sed '/twm &/d' /mnt/etc/X11/xinit/xinitrc;
+sed '/xclock/d' /mnt/etc/X11/xinit/xinitrc;
+sed '/xterm -geometry/d' /mnt/etc/X11/xinit/xinitrc;
 
 echo "# A variável a seguir define a sessão que será iniciada se o usuário não selecionar explicitamente uma sessão
 # Fonte: http://svn.berlios.de/svnroot/repos/slim/trunk/xinitrc.sample
 DEFAULT_SESSION=xfce4
 
 case $1 in
-kde)
-exec startkde
-;;
-xfce4)
-exec startxfce4
-;;
-icewm)
-icewmbg &
-icewmtray &
-exec icewm
-;;
-wmaker)
-exec wmaker
-;;
-blackbox)
-exec blackbox
-;;
-*)
-exec $DEFAULT_SESSION
-;;
+ kde)
+  exec startkde
+ ;;
+ xfce4)
+  exec startxfce4
+ ;;
+ icewm)
+  icewmbg &
+  icewmtray &
+  exec icewm
+ ;;
+ wmaker)
+  exec wmaker
+ ;;
+ blackbox)
+  exec blackbox
+ ;;
+ *)
+  exec $DEFAULT_SESSION
+ ;;
 esac" >> /etc/X11/xinit/xinitrc
 
 #/ORGANIZAR
