@@ -49,6 +49,13 @@ usar_wifi="nao";
 # syslinux/grub/nenhum
 boot_loader="grub";
 
+# Desktop - cinnamon/e17/gnome/kde/xfce/nenhum
+ambiente_de_trabalho = "cinnamon";
+
+# Browser opera/firefox/chromiun/nenhum
+navegador = "opera";
+
+
 alterei_os_dados_acima="nao";
 ####################################
 # Não alterar a partir deste ponto #
@@ -115,16 +122,48 @@ fi
 pacstrap /mnt base base-devel;
 espera "base e base-devel instalados.";
 
+case $ambiente_de_trabalho in
+ kde)
+  pacstrap /mnt kde;
+  ;;
+ xfce)
+  pacstrap /mnt xfce4;
+  ;;
+ gnome)
+  pacstrap /mnt gnome gnome-extra;
+  ;;
+ cinnamon)
+  pacstrap /mnt cinnamon gnome gnome-extra;
+  ;;
+ e17)
+  pacstrap /mnt enlightenment17;
+  ;;
+ *)
+  ;;;
+esac
+
+case $navegador in
+ opera)
+  pacstrap /mnt opera;
+  ;;
+ chromium)
+  pacstrap /mnt chromiun;
+  ;;
+ firefox)
+  pacstrap /mnt firefox;
+  ;;
+ *)
+  ;;;
+esac
+
 
 # ORGANIZAR
 
 
 
 #complementares
-pacstrap /mnt wpa_supplicant dialog bash-completion xorg gvfs gvfs-smb xfce4 \
- xfce4-mailwatch-plugin flashplugin bluez blueman networkmanager \
- network-manager-applet jdk7-openjdk file-roller opera chromium vlc leafpad \
- transmission-gtk ttf-freefont ttf-dejavu slim;
+pacstrap /mnt wpa_supplicant dialog bash-completion xorg gvfs gvfs-smb flashplugin bluez blueman networkmanager \
+ network-manager-applet jdk7-openjdk file-roller vlc leafpad transmission-gtk ttf-freefont ttf-dejavu slim;
 
 arch-chroot /mnt /bin/bash -c "systemctl enable bluetooth.service";
 arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager";
