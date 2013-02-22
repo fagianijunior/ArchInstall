@@ -1,6 +1,3 @@
-#Array com os layouts do teclado
-layouts=("br-abnt" "br-abnt2" "us" "en")
-
 #Array de partições (informações do usuário)
 declare -A particoes=()
 
@@ -13,13 +10,15 @@ function introducao() {
   echo "Bem vindo ao sistema de instalação para a distribuição Arch Linux!"
   echo "Os criadores desse script não se responsabilizam por qualquer dano"
   echo "em suas dados e/ou equipamento de hardware, executando esse script"
-  echo "você estará aceitando 
+  echo "você estará aceitando "
   pausa
 }
 
 function layout_teclado() {
-
   introducao
+
+  #Array com os layouts do teclado
+  layouts=("br-abnt" "br-abnt2" "us" "en")
 
   for (( i=0; i<${#layouts[@]}; i++)); do
     if [ $1 == ${layouts[i]} ]; then
@@ -66,13 +65,15 @@ function hd_para_sistema() {
 }
 
 function hd_para_home() {
+  particoes["home_criar"]=$1
+
   if [ $1 == "sim" ]; then
-    particoes["home_criar"]=$1
     particoes["home_particao"]=$2
     particoes["home_fs"]=$3
-  else
-    particoes["home_criar"]=$1
+  elif [ $1 == "manter" ]; then
+    particoes["home_particao"]=$2
   fi
+
 }
 
 function hd() {
@@ -85,6 +86,7 @@ function hd() {
 function criar_fs() {
   mkfs -t ${particoes["sistema_fs"]} $usar_hd${particoes["sistema_particao"]}
   mount $usar_hd${particoes["sistema_particao"]} /mnt
+
   if [ ${particoes["boot_criar"]} == "sim" ]; then
     mkfs -t ${particoes["boot_fs"]} $usar_hd${particoes["boot_particao"]}
     mkdir /mnt/boot
@@ -119,6 +121,7 @@ function iniciar_instalacao(){
 }
 
 function configuracao_inicial() {
+  arch-chroot /mnt /bin/bash -c "loadkeys "$layout
   genfstab -p /mnt >> /mnt/etc/fstab
   echo $1 > /mnt/etc/hostname
   arch-chroot /mnt /bin/bash -c "ln -s /usr/share/zoneinfo/"$2" /etc/localtime"
@@ -144,7 +147,6 @@ function gerenciador_de_boot() {
     arch-chroot /mnt /bin/bash -c "mkdir -p /boot/grub/locale";
     arch-chroot /mnt /bin/bash -c "cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo"
     arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
-    pausa
   elif [ $1 == "syslinux" ]; then
     pacstrap /mnt syslinux
     arch-chroot /mnt /bin/bash -c "/usr/sbin/syslinux-install_update -iam"
