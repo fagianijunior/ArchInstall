@@ -41,10 +41,10 @@ gerenciador_de_boot "grub"
 instalar_desktop "cinnamon" "sim"
 
 # Senha
-root_senha "tutopiajr"
+root_senha "senha_root"
 # Caso queira adicionar mais de um  usuário, copie esse comando
 # em outra linha
 # Usuario | Senha | Grupos adicionnais
-novo_usuario "terabytes" "t" "sys disk wheel uucp games network video audio storage power"
+novo_usuario "terabytes" "senha_usuario" "sys disk wheel uucp games network video audio storage power"
 
 finalizar_instalacao

@@ -167,7 +167,7 @@ function instalar_cinnamon() {
   if [ $1 == "sim" ]; then
     pacstrap /mnt gnome gnome-extra
   fi
-  pacstrap /mnt xorg cinnamon
+  pacstrap /mnt xorg cinnamon gdm
   arch-chroot /mnt /bin/bash -c "systemctl enable gdm.service"
 }
 
