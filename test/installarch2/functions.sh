@@ -139,6 +139,13 @@ function configuracao_inicial() {
   arch-chroot /mnt /bin/bash -c "mkinitcpio -p linux"
 }
 
+function notebook() {
+  if [ $1 == "sim" ]; then
+    pacstrap /mnt acpid
+    arch-chroot /mnt /bin/bash -c "systemctl enable acpid.service"
+  fi
+}
+
 function gerenciador_de_boot() {
   if [ $1 == "grub" ]; then
     pacstrap /mnt grub-bios
@@ -158,17 +165,32 @@ function instalar_desktop() {
     cinnamon)
       instalar_cinnamon $2
     ;;
+    mate)
+      instalar_mate $2
+    ;;
     *)
     ;;
   esac
 }
-
+function instalar_mate() {
+  echo "[mate]" >> /etc/pacman.conf
+  echo "Server = http://repo.mate-desktop.org/archlinux/$arch" >> /etc/pacman.conf
+  pacstrap /mnt xorg mate gdm
+  if [ $1 == "sim" ]; then
+    pacstrap /mnt mate-extra
+  fi
+  arch-chroot /mnt /bin/bash -c "systemctl enable gdm.service"
+  arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager.service"
+  arch-chroot /mnt /bin/bash -c "systemctl enable bluetooth.service"
+}
 function instalar_cinnamon() {
   if [ $1 == "sim" ]; then
     pacstrap /mnt gnome gnome-extra
   fi
   pacstrap /mnt xorg cinnamon gdm
   arch-chroot /mnt /bin/bash -c "systemctl enable gdm.service"
+  arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager.service"
+  arch-chroot /mnt /bin/bash -c "systemctl enable bluetooth.service"
 }
 
 function root_senha() {

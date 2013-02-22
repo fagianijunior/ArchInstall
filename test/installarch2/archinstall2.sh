@@ -32,19 +32,22 @@ iniciar_instalacao "base-devel dialog wpa_supplicant opera firefox"
 # Nome na rede (Hostname) | Zona (localtime) | Linguagem do sistema | mapa de fonte
 configuracao_inicial "ArchNote" "America/Fortaleza" "pt_BR.UTF-8" "lat9w-16" "8859-1_to_uni"
 
+# sim/não
+notebook "sim"
+
 # grub/syslinux
 gerenciador_de_boot "grub"
 
 # Caso queira fazer a instalação básica do desktop escolhido
 # Responda "não" na segunda opção
-# cinnamon/xfce/kde/gnome/nenhum | sim/não
-instalar_desktop "cinnamon" "sim"
+# cinnamon/mate/nenhum | sim/não
+instalar_desktop "mate" "não"
 
 # Senha
 root_senha "senha_root"
 # Caso queira adicionar mais de um  usuário, copie esse comando
 # em outra linha
 # Usuario | Senha | Grupos adicionnais
-novo_usuario "terabytes" "senha_usuario" "sys disk wheel uucp games network video audio storage power"
+novo_usuario "terabytes" "senha_usuario" "sys disk wheel uucp games network video audio storage power root"
 
 finalizar_instalacao
