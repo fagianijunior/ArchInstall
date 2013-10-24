@@ -36,7 +36,7 @@ function layout_teclado() {
 
 function usar_wifi() {
   if [ $1 == "sim" ]; then
-    wifi_menu
+    wifi-menu
   fi
 }
 
@@ -158,6 +158,10 @@ function instalar_desktop() {
     cinnamon)
       instalar_cinnamon $2
     ;;
+  case $1 in
+    gnome)
+      instalar_gnome $2
+    ;;
     *)
     ;;
   esac
@@ -165,9 +169,17 @@ function instalar_desktop() {
 
 function instalar_cinnamon() {
   if [ $1 == "sim" ]; then
-    pacstrap /mnt gnome gnome-extra
+    instalar_gnome $1
   fi
   pacstrap /mnt xorg cinnamon gdm
+  arch-chroot /mnt /bin/bash -c "systemctl enable gdm.service"
+}
+
+function instalar_gnome() {
+  if [ $1 == "sim" ]; then
+    pacstrap /mnt gnome gnome-extra
+  fi
+  pacstrap /mnt xorg gnome gdm
   arch-chroot /mnt /bin/bash -c "systemctl enable gdm.service"
 }
 
@@ -195,5 +207,5 @@ EOF"
 
 function finalizar_instalacao() {
   umount /mnt/{boot,home,}
-  pausa "Se tudo ocorreu dentro dos conformes, seu novo Arch Linux está instalado! :)" 
+  pausa "Se tudo ocorreu dentro dos conformes, seu novo Arch Linux está instalado! :)"
 }
