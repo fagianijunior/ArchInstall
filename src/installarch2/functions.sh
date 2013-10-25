@@ -35,7 +35,7 @@ function layout_teclado() {
 }
 
 function usar_wifi() {
-  if [ $1 == "sim" ]; then
+  if [ $1 == "nao" ]; then
     wifi-menu
   fi
 }
@@ -162,6 +162,10 @@ function instalar_desktop() {
     gnome)
       instalar_gnome $2
     ;;
+  case $1 in
+    xfce)
+      instalar_xfce $2
+    ;;
     *)
     ;;
   esac
@@ -181,6 +185,10 @@ function instalar_gnome() {
   fi
   pacstrap /mnt xorg gnome gdm
   arch-chroot /mnt /bin/bash -c "systemctl enable gdm.service"
+}
+
+function instalar_xfce() {
+  pacstrap /mnt xorg xfce
 }
 
 function root_senha() {
