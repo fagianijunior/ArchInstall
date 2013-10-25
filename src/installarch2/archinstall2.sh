@@ -18,9 +18,9 @@ hd_para_boot "nao" "1" "ext2"
 # sim/não | partição
 hd_para_swap "sim" "1"
 # Particao | File System
-hd_para_sistema "2" "ext3"
+hd_para_sistema "2" "ext4"
 # sim/não/manter | Partição | File System
-hd_para_home "manter" "4" "ext3"
+hd_para_home "nao" "4" "ext3"
 # /dev/sda ou /dev/sdb ou /dev/hda ou etc.
 hd "/dev/sda"
 
