@@ -35,7 +35,7 @@ function layout_teclado() {
 }
 
 function usar_wifi() {
-  if [ $1 == "nao" ]; then
+  if [ $1 == "sim" ]; then
     wifi-menu
   fi
 }
