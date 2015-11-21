@@ -22,7 +22,7 @@
 #######################################
 root_senha="senha_root";
 
-layout_teclado="br-abnt2";
+layout_teclado="br-abnt2"; #us
 linguagem="pt_BR.UTF-8";
 font="lat9w-16";
 font_map="8859-1_to_uni";
@@ -42,7 +42,7 @@ formatar_home_hd="nao";
 usar_wifi="nao";
 
 # syslinux/grub/nenhum
-boot_loader="grub";
+boot_loader="syslinux";
 
 #sim/nao #Está opção ainda não funciona
 #pos_instalacao="sim";
@@ -115,7 +115,7 @@ espera "base e base-devel instalados.";
 if [ "$boot_loader" == "grub" ]; then
 	pacstrap /mnt grub-bios;
 elif [ "$boot_loader" == "syslinux" ]; then
-	pacstrap /mnt syslinux;
+	pacstrap /mnt syslinux gptfdisk;
 fi
 espera "$boot_loader bootloader instalado.";
 
@@ -146,7 +146,7 @@ espera "gerou o locale. Criou a RAM disk.";
 
 if [ "$boot_loader" == "grub" ]; then
    arch-chroot /mnt /bin/bash -c "modprobe dm-mod";
-   arch-chroot /mnt /bin/bash -c "grub-install --recheck --debug "${boot_hd:0:8};
+   arch-chroot /mnt /bin/bash -c "grub-install – –target=i386-pc – –recheck /dev/sda "${boot_hd:0:8};
    arch-chroot /mnt /bin/bash -c "mkdir -p /boot/grub/locale";
    arch-chroot /mnt /bin/bash -c "cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo";
    arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg";
